@@ -267,11 +267,16 @@ function generate(docType, title, docs, filename, resolveLinks) {
     html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
   }
 
+  // Try discover the symbol name when using modules to allow a search for it
+  // Example: extracts "MyComponent" from title "Module: my-package/lib/MyComponent"
+  var lastSeparatorIndex = Math.max(title.lastIndexOf('/'), title.lastIndexOf(':'));
+  var probablySymbolName = title.substr(lastSeparatorIndex + 1);
+
   if (searchEnabled) {
     searchableDocuments[filename] = {
       "id": filename,
       "title": title,
-      "body": searchData(html)
+      "body": probablySymbolName + '\n' + searchData(html)
     };
   }
 
